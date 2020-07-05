@@ -22,15 +22,13 @@ archive should be created.
 function Move-ToArchive {
   param(
     [string]
-    $From,
+    $From = "$home\Downloads\",
 
     [string]
-    $To
+    $To = "$home\Archive\"
   )
 
-  Write-Host "Hello, World!!!!"
-
-  1
+  $From
 }
 
 Export-ModuleMember Move-ToArchive

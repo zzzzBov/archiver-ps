@@ -9,9 +9,9 @@ InModuleScope $ThisModuleName {
       $result | Should -be $true;
     }
   
-    It "temporarily should return 1" {
+    It "temporarily should return something else" {
       $result = Move-ToArchive
-      $result | Should -be 1
+      $result | Should -be "$home\Downloads\"
     }
   }
 }
