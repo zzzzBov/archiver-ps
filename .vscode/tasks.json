@@ -1,1 +1,22 @@
-{}
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Update Archiver Module",
+      "type": "shell",
+      "command": ".\\tasks\\update.ps1",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Pester",
+      "type": "shell",
+      "command": "Invoke-Pester",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}
