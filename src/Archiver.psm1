@@ -19,7 +19,6 @@ Specifies the destination folder (defaults to "$home/Archive") where the
 archive should be created.
 
 #>
-
 function Move-ToArchive {
   param(
     [string]
@@ -30,6 +29,8 @@ function Move-ToArchive {
   )
 
   Write-Host "Hello, World!!!!"
+
+  1
 }
 
 Export-ModuleMember Move-ToArchive
