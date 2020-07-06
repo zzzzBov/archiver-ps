@@ -28,6 +28,40 @@ function Move-ToArchive {
     $To = "$home\Archive\"
   )
 
+  <#
+  
+  Read all the files in $From.
+
+  `Get-ChildItem $From -File`
+
+  Filter out any that are from this month, or any time in the future.
+
+  Move the remaining files to $home/Archive subfolders based on their last updated date.
+
+  -----
+
+  Read all the directories in $From.
+
+  `Get-ChildItem $From -Directory`
+
+  Find each directories' last updated date*.
+
+  Filter out any that are from this month, or any time in the future.
+
+  Move the remaining directories to $home/Archive subfolders based on their last updated date.
+
+  -----
+
+  * Finding a directories' last updated date:
+
+  Find all items in the directory (including the directory).
+  
+  Get the updated date from each item.
+
+  Return the latest updated date.
+
+  #>
+
   $From
 }
 
