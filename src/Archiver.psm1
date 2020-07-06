@@ -28,17 +28,32 @@ function Move-ToArchive {
     $To = "$home\Archive\"
   )
 
+  # Read all the files in $From
+  $files = Get-ChildItem -Path $From -File
+
+  # Filter out any that are from this month, or any time in the future.
+
+  $year = Get-Date -Format "yyyy"
+  $month = Get-Date -Format "MM"
+  $firstOfMonth = [DateTime]::Parse("$year-$month-01")
+
+  $oldFiles = $files | Where-Object {$_.LastWriteTime -lt $firstOfMonth}
+
+  # Move the remaining files to $home/Archive subfolders based on their last updated date.
+
+  foreach ($file in $oldFiles) {
+    $y = $file.LastWriteTime.ToString("yyyy")
+    $m = $file.LastWriteTime.ToString("MM")
+    $archive = [IO.Path]::Combine($To, $y, $m)
+
+    if (!(Test-Path $archive)) {
+      New-Item -Path $archive -ItemType Directory -Force
+    }
+
+    $file | Move-Item -Destination $archive
+  }
+
   <#
-  
-  Read all the files in $From.
-
-  `Get-ChildItem $From -File`
-
-  Filter out any that are from this month, or any time in the future.
-
-  Move the remaining files to $home/Archive subfolders based on their last updated date.
-
-  -----
 
   Read all the directories in $From.
 
@@ -61,8 +76,6 @@ function Move-ToArchive {
   Return the latest updated date.
 
   #>
-
-  $From
 }
 
 Export-ModuleMember Move-ToArchive
