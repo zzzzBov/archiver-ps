@@ -4,22 +4,46 @@ Get-Module -Name $ThisModuleName -All | Remove-Module -Force -ErrorAction Ignore
 Import-Module -Name "$ThisModule.psm1" -Force -ErrorAction Stop
 InModuleScope $ThisModuleName {
   Describe "Move-ToArchive" {
+    BeforeEach {
+      $dir = New-Guid
+      $path = "TestDrive:\$dir"
+      New-Item -Path $path -ItemType Directory -Force
+      pushd $path
+    }
+
+    AfterEach {
+      popd
+    }
+
     It "Exists" {
       $result = If (Get-Command Move-ToArchive -ErrorAction SilentlyContinue) {$true} Else {$false};
       $result | Should -be $true;
     }
   
     It "Should move old files from the source folder to a subfolder in the archive" {
-      $dir = New-Guid
-      New-TestFile -Path "TestDrive:\$dir\Downloads\a.txt" -Created "2020-01-01" -Updated "2020-01-01"
+      New-TestFile -Path "Downloads\a.txt" -Created "2020-01-01" -Updated "2020-01-01"
       
-      Move-ToArchive -From "TestDrive:\$dir\Downloads" -To "TestDrive:\$dir\Archive"
+      Move-ToArchive -From "Downloads" -To "Archive"
 
-      $archiveResult = Test-Path "TestDrive:\$dir\Archive\2020\01\a.txt"
+      $archiveResult = Test-Path "Archive\2020\01\a.txt"
 
       $archiveResult | Should -be $true
 
-      $downloadsResult = Test-Path "TestDrive:\$dir\Downloads\a.txt"
+      $downloadsResult = Test-Path "Downloads\a.txt"
+
+      $downloadsResult | Should -be $false
+    }
+
+    It "Should move old folders from the source folder to a subfolder in the archive" {
+      New-TestFile -Path "Downloads\folder\a.txt" -Created "2020-01-01" -Updated "2020-01-01"
+      
+      Move-ToArchive -From "Downloads" -To "Archive"
+
+      $archiveResult = Test-Path "Archive\2020\01\folder\a.txt"
+
+      $archiveResult | Should -be $true
+
+      $downloadsResult = Test-Path "Downloads\folder\a.txt"
 
       $downloadsResult | Should -be $false
     }
