@@ -47,6 +47,24 @@ InModuleScope $ThisModuleName {
 
       $downloadsResult | Should -be $false
     }
+
+    It "Should not move folders from the source folder to a subfolder if the folder contains recent files" {
+      $now = Get-Date
+
+      New-TestFile -Path "Downloads\folder\a.txt" -Created "2020-01-01" -Updated "2020-01-01"
+
+      New-TestFile -Path "Downloads\folder\b.txt" -Created $now.ToString("yyyy-MM-dd") -Updated $now.ToString("yyyy-MM-dd")
+
+      Move-ToArchive -From "Downloads" -To "Archive"
+
+      $archiveResult = Test-Path "Archive\2020\01\folder"
+
+      $archiveResult | Should -be $false
+
+      $downloadsResult = Test-Path "Downloads\folder\a.txt"
+
+      $downloadsResult | Should -be $true
+    }
   }
 }
 
