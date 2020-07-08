@@ -36,7 +36,7 @@ InModuleScope $ThisModuleName {
 
     It "Should move old folders from the source folder to a subfolder in the archive" {
       New-TestFile -Path "Downloads\folder\a.txt" -Created "2020-01-01" -Updated "2020-01-01"
-      
+
       Move-ToArchive -From "Downloads" -To "Archive"
 
       $archiveResult = Test-Path "Archive\2020\01\folder\a.txt"
@@ -62,7 +62,27 @@ function global:New-TestFile {
     $Updated
   )
 
-  $f = New-Item -Path $Path -ItemType File -Force
+  $parentPath = Split-Path -Path $Path -Parent
+
+  $partialPath = $null
+  foreach ($folder in $parentPath.split("\")) {
+    $partialPath += "$folder\"
+    if (!(Test-Path $partialPath)) {
+      $newFolder = New-Item -Path $partialPath -ItemType Directory
+
+      if ($Created) {
+        $newFolder.CreationTime = [DateTime]::Parse($Created)
+      }
+      
+      if ($Updated) {
+        $newFolder.LastWriteTime = [DateTime]::Parse($Updated)
+      }
+    }
+  }
+
+  $f = New-Item -Path $Path -ItemType File
+
+
   
   if ($Created) {
     $f.CreationTime = [DateTime]::Parse($Created)

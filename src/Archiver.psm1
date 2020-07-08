@@ -28,14 +28,15 @@ function Move-ToArchive {
     $To = "$home\Archive\"
   )
 
+  # Setup
+  $year = Get-Date -Format "yyyy"
+  $month = Get-Date -Format "MM"
+  $firstOfMonth = [DateTime]::Parse("$year-$month-01")
+
   # Read all the files in $From
   $files = Get-ChildItem -Path $From -File
 
   # Filter out any that are from this month, or any time in the future.
-
-  $year = Get-Date -Format "yyyy"
-  $month = Get-Date -Format "MM"
-  $firstOfMonth = [DateTime]::Parse("$year-$month-01")
 
   $oldFiles = $files | Where-Object {$_.LastWriteTime -lt $firstOfMonth}
 
@@ -53,29 +54,47 @@ function Move-ToArchive {
     $file | Move-Item -Destination $archive
   }
 
-  <#
+  # Read all the directories in $From.
+  $folders = Get-ChildItem -Path $From -Directory
 
-  Read all the directories in $From.
+  # Find each directories' last updated date* and filter out any that are from
+  # this month, or any time in the future.
+  $oldFolders = $folders | Where-Object {Get-FolderUpdatedDate $_ -lt $firstOfMonth}
 
-  `Get-ChildItem $From -Directory`
+  # Move the remaining directories to $home/Archive subfolders based on their
+  # last updated date.
+  foreach ($folder in $oldFolders) {
+    $date = Get-FolderUpdatedDate $folder
 
-  Find each directories' last updated date*.
+    $y = $date.ToString("yyyy")
+    $m = $date.ToString("MM")
+    $archive = [IO.Path]::Combine($To, $y, $m)
 
-  Filter out any that are from this month, or any time in the future.
+    if (!(Test-Path $archive)) {
+      New-Item -Path $archive -ItemType Directory -Force
+    }
 
-  Move the remaining directories to $home/Archive subfolders based on their last updated date.
+    $folder | Move-Item -Destination $archive
+  }
+}
 
-  -----
+function Get-FolderUpdatedDate {
+  param(
+    [IO.DirectoryInfo]
+    $folder
+  )
 
-  * Finding a directories' last updated date:
+  # * Finding a directories' last updated date:
 
-  Find all items in the directory (including the directory).
-  
-  Get the updated date from each item.
+  # Find all items in the directory (including the directory).
+  $items = @($folder | Get-ChildItem -Recurse)
+  $items += $folder
 
-  Return the latest updated date.
+  # Get the updated date from each item.
+  $measure = $items | % {$_.LastWriteTime} | Measure-Object -Maximum
 
-  #>
+  # Return the latest updated date.
+  return $measure.Maximum
 }
 
 Export-ModuleMember Move-ToArchive
