@@ -65,6 +65,18 @@ InModuleScope $ThisModuleName {
 
       $downloadsResult | Should -be $true
     }
+
+    <#
+    
+    Test cases to try:
+
+    Created date newer than updated date
+    null created date
+    null updated date
+    downloads folder contains symlink
+    empty folder
+
+    #>
   }
 }
 
