@@ -59,7 +59,7 @@ function Move-ToArchive {
 
   # Find each directories' last updated date* and filter out any that are from
   # this month, or any time in the future.
-  $oldFolders = $folders | Where-Object {Get-FolderUpdatedDate $_ -lt $firstOfMonth}
+  $oldFolders = $folders | Where-Object {(Get-FolderUpdatedDate $_) -lt $firstOfMonth}
 
   # Move the remaining directories to $home/Archive subfolders based on their
   # last updated date.
