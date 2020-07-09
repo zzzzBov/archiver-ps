@@ -66,7 +66,19 @@ InModuleScope $ThisModuleName {
       $downloadsResult | Should -be $true
     }
 
+    It "Should move old empty folders from the source folder to a subfolder in the archive" {
+      New-TestFolders -Path "Downloads\folder" -Created "2020-01-01" -Updated "2020-01-01"
 
+      Move-ToArchive -From "Downloads" -To "Archive"
+
+      $archiveResult = Test-Path "Archive\2020\01\folder"
+
+      $archiveResult | Should -be $true
+
+      $downloadsResult = Test-Path "Downloads\folder"
+
+      $downloadsResult | Should -be $false
+    }
 
     <#
     
