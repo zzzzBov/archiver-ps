@@ -76,6 +76,8 @@ function Move-ToArchive {
 
     $folder | Move-Item -Destination $archive
   }
+
+  return
 }
 
 function Get-FolderUpdatedDate {
