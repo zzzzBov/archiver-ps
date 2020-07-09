@@ -66,6 +66,8 @@ InModuleScope $ThisModuleName {
       $downloadsResult | Should -be $true
     }
 
+
+
     <#
     
     Test cases to try:
@@ -94,21 +96,7 @@ function global:New-TestFile {
 
   $parentPath = Split-Path -Path $Path -Parent
 
-  $partialPath = $null
-  foreach ($folder in $parentPath.split("\")) {
-    $partialPath += "$folder\"
-    if (!(Test-Path $partialPath)) {
-      $newFolder = New-Item -Path $partialPath -ItemType Directory
-
-      if ($Created) {
-        $newFolder.CreationTime = [DateTime]::Parse($Created)
-      }
-      
-      if ($Updated) {
-        $newFolder.LastWriteTime = [DateTime]::Parse($Updated)
-      }
-    }
-  }
+  New-TestFolders -Path $parentPath -Created $Created -Updated $Updated
 
   $f = New-Item -Path $Path -ItemType File
 
@@ -123,4 +111,37 @@ function global:New-TestFile {
   }
 
   return $f
+}
+
+function global:New-TestFolders {
+  param(
+    [string]
+    $Path,
+
+    [string]
+    $Created,
+
+    [string]
+    $Updated
+  )
+
+  $partialPath = $null
+  $folders = @()
+  foreach ($folder in $Path.split("\")) {
+    $partialPath += "$folder\"
+    if (!(Test-Path $partialPath)) {
+      $newFolder = New-Item -Path $partialPath -ItemType Directory
+      $folders += $newFolder
+
+      if ($Created) {
+        $newFolder.CreationTime = [DateTime]::Parse($Created)
+      }
+      
+      if ($Updated) {
+        $newFolder.LastWriteTime = [DateTime]::Parse($Updated)
+      }
+    }
+  }
+
+  return $folders
 }
