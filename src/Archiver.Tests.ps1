@@ -88,7 +88,6 @@ InModuleScope $ThisModuleName {
     null created date
     null updated date
     downloads folder contains symlink
-    empty folder
 
     #>
   }
