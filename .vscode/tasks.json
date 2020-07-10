@@ -17,6 +17,14 @@
       "options": {
         "cwd": "${workspaceFolder}"
       }
+    },
+    {
+      "label": "Publish to PowerShell Gallery",
+      "type": "shell",
+      "command": ".\\tasks\\publish.ps1",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
     }
   ]
 }
