@@ -8,7 +8,9 @@ The Archiver powershell module provides a `Move-ToArchive` function to automatic
 PS> Install-Module -Name Archiver
 ```
 
-## Api
+## API
+
+Use the `Get-Help` function to view the latest API:
 
 ```
 PS> Get-Help Move-ToArchive
